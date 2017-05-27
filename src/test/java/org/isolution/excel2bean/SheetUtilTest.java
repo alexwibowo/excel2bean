@@ -1,7 +1,6 @@
 package org.isolution.excel2bean;
 
 import com.google.common.collect.ImmutableMap;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Before;
@@ -25,19 +24,9 @@ public class SheetUtilTest {
     public void setup() {
         workbook = new XSSFWorkbook();
         final XSSFSheet sheet = workbook.createSheet();
-        addRow(sheet, new String[]{"StudentId", "Firstname", "Surname"});
-        addRow(sheet, new String[]{"1", "Alex", "Wibowo"});
-        addRow(sheet, new String[]{"2", "Randy", "Wong"});
-    }
-
-    private XSSFRow addRow(final XSSFSheet sheet,
-                           final String[] values) {
-        final long rowCount = stream(sheet.spliterator(), false).count();
-        final XSSFRow newRow = sheet.createRow( (int) rowCount);
-        for (int i = 0; i < values.length; i++) {
-            newRow.createCell(i).setCellValue(values[i]);
-        }
-        return newRow;
+        TestHelper.addRow(sheet, new String[]{"StudentId", "Firstname", "Surname"});
+        TestHelper.addRow(sheet, new String[]{"1", "Alex", "Wibowo"});
+        TestHelper.addRow(sheet, new String[]{"2", "Randy", "Wong"});
     }
 
     @Test

@@ -2,7 +2,6 @@ package org.isolution.excel2bean;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +17,8 @@ import static java.util.stream.Collectors.toList;
 public final class WorkbookProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkbookProcessor.class);
     public static final String METADATA_SHEET_NAME = "METADATA";
+
+    private final WorkbookValidator workbookValidator = new WorkbookValidator();
 
     public void read(final File file) {
         LOGGER.info("Opening file: {}", file);
@@ -40,7 +41,7 @@ public final class WorkbookProcessor {
 
     private List<Object> processDataSheet(final Object metadata, final Sheet sheet) {
         final Set<String> fieldNames = SheetUtil.readFieldNames(sheet);
-        LOGGER.info("");
+
         return null;
     }
 
@@ -53,16 +54,7 @@ public final class WorkbookProcessor {
         LOGGER.info("Reading workbook");
         final XSSFWorkbook workbook = new XSSFWorkbook(pkg);
 
-        LOGGER.info("Validating workbook");
-        final int numberOfSheets = workbook.getNumberOfSheets();
-        if (numberOfSheets == 0) {
-            throw WorkbookValidationException.emptyWorkbook();
-        }
-
-        final XSSFSheet metadataSheet = workbook.getSheet(METADATA_SHEET_NAME);
-        if (metadataSheet == null) {
-            throw WorkbookValidationException.missingMetadataSheet(METADATA_SHEET_NAME);
-        }
+        workbookValidator.validate(workbook);
 
         LOGGER.info("Reading sheets");
         final List<Sheet> sheets = new ArrayList<>();
